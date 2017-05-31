@@ -28,7 +28,6 @@ class Login extends Component {
            body: JSON.stringify({session:{email: email, password: password}})
         }).then((response) => response.json())
         .then((responseJson) => {
-          debugger
           if(responseJson.status == 'success'){
             this.props.logInUser(responseJson.user, responseJson.token)
           }else{
@@ -48,6 +47,10 @@ class Login extends Component {
       this.setState ({password: text})
    }
 
+   register = () =>{
+    this.props.registerForm();
+   }
+
 
    render() {
       return (
@@ -60,7 +63,15 @@ class Login extends Component {
             <Text>
                Submit
             </Text>
-         </TouchableHighlight>
+        </TouchableHighlight>
+        <Text style={styles.text}>or</Text>
+
+        <TouchableHighlight
+            onPress = { () => this.register()} style = {styles.submit}>
+            <Text>
+               Register Now
+            </Text>
+        </TouchableHighlight>
       </View>
     );
   }
