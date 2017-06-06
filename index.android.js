@@ -11,21 +11,31 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableHighlight
+  TouchableHighlight, 
+  Button
 } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { NavigationActions } from 'react-navigation'
+
 
 import SignUp from './src/components/signUp';
 import Profile from './src/components/profile';
 import Login from './src/components/login';
+import UserListing from './src/components/userListing';
+// import UserDetails from './src/components/userDetails';
+global.auth_token = '';
 
-export default class AwesomeProject extends Component {
-  constructor(){
-      super()
+class Home extends React.Component {
+  static navigationOptions = ({ navigation }) => ({
+    title: 'welcome user ',
+    headerLeft: null,
+  });
+
+  constructor(props){
+      super(props)
       this.state={
          user:{},
-         token:'',
-         showLogin: true,
-         showSignUp:false
+         token:''
       }
    }
 
@@ -33,46 +43,55 @@ export default class AwesomeProject extends Component {
     try {
       var token = await AsyncStorage.getItem('token');
       if (token !== null){
-        this.setState({token: token, showLogin: false});
+        this.setState({token: token});
+        this.props.navigation.navigate('Profile', {token: token, user: {email: 'saini.pardeep87@gmail.com'}});
       } 
     } catch (error) {
+      global.auth_token = '';
       alert('AsyncStorage error: ' + error.message);
     }
    }
-
-   setUserAndToken = async (user, token) =>{
-    this.setState({user: user, token: token, showLogin: false, showSignUp: false})
-    try {
-      await AsyncStorage.setItem('token', token);
-    } catch (error) {
-      alert('AsyncStorage error: ' + error.message);
-    }
-   }
-
-   handleLogout=() =>{
-    this.setState({showLogin: true})
-   }
-
-   showSingUP=() =>{
-    this.setState({showLogin: false, showSignUp: true})
-   }
-
-   backToLogin=()=>{
-    this.setState({showLogin: true, showSignUp: false})
-   }
-
-
 
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
-        { this.state.showLogin ? <Login logInUser={this.setUserAndToken} showLogin={this.showLogin} registerForm={this.showSingUP}/> : null}
-        {(!this.state.showLogin && !this.state.showSignUp) ? <Profile user={this.state.user} token={this.state.token} logout={this.handleLogout}/> : null}
-        {this.state.showSignUp ? <SignUp logInUser={this.setUserAndToken} backToLogin={this.backToLogin}/> : null}
+        <Button
+          onPress={() => navigate('Login')}
+          title="Login" />
+          <Text>OR</Text>
+        <Button
+          onPress={() => navigate('SignUp')}
+          title="Register" />
       </View>     
     );
   }
 }
+
+// _gettoken= async () =>{ 
+//   try {
+//     var token = await AsyncStorage.getItem('token');
+//     if (token != null){
+//       return token.json();
+//     }
+//     else{
+//        return '';
+//     }
+//   } catch (error) {
+//     return '';
+//   }
+// }
+
+// var token = _gettoken();
+const AwesomeProject = StackNavigator({
+  // initialRouteName: {screen: (token.length == 0 ? Home : Profile)},
+  Home: { screen: Home },
+  Login: {screen:  Login},
+  SignUp: {screen: SignUp},
+  Profile: {screen: Profile},
+  UserListing: {screen: UserListing}
+
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -87,4 +106,5 @@ const styles = StyleSheet.create({
    }
 });
 
+// AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
 AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);

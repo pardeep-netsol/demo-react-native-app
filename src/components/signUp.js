@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
 
 class SignUp extends Component {
+  static navigationOptions = {
+    title: 'Register',
+  };
    constructor(){
       super()
       this.state={
@@ -10,7 +13,7 @@ class SignUp extends Component {
          password_confirmation:''
       }
    }
-   login =(email, password, password_confirmation) =>{
+   signUp =(email, password, password_confirmation) =>{
       if (this.state.email.length == 0){
         alert("please enter email");
         return ;
@@ -61,6 +64,7 @@ class SignUp extends Component {
 
 
    render() {
+      const { navigate } = this.props.navigation;
       return (
       <View style = {styles.container}>
         
@@ -68,14 +72,14 @@ class SignUp extends Component {
         <Text style={styles.text}>Password</Text><TextInput onChangeText = {this.updatePassword} secureTextEntry={true} style = {styles.input} underlineColorAndroid='transparent'/>
         <Text style={styles.text}>Confirm Password</Text><TextInput onChangeText = {this.updateConfirPassword} secureTextEntry={true} style = {styles.input} underlineColorAndroid='transparent'/>
         <TouchableHighlight
-            onPress = { () => this.login()} style = {styles.submit}>
+            onPress = { () => this.signUp()} style = {styles.submit}>
             <Text>
                Register
             </Text>
         </TouchableHighlight>
         <Text style={{marginLeft: 50}}>or</Text>
         <TouchableHighlight
-            onPress = { () => this.redirectToLogin()} style = {styles.submit}>
+            onPress = { () => navigate('Home')} style = {styles.submit}>
             <Text>
                Cancel
             </Text>

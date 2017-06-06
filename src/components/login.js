@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
-import { AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
+import { AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet, AsyncStorage } from 'react-native';
 
 class Login extends Component {
-   constructor(){
-      super()
+  static navigationOptions = {
+    title: 'Login',
+  };
+   constructor(props){
+      super(props)
       this.state={
          email:'',
          password:''
       }
    }
-   login =(email, password) =>{
-      if (email.length == 0){
+   login =  (email, password) =>{
+     var navigator = this.props.navigation;
+     if (email.length == 0){
         alert("please enter email");
         return ;
       }
@@ -27,15 +31,18 @@ class Login extends Component {
            },
            body: JSON.stringify({session:{email: email, password: password}})
         }).then((response) => response.json())
-        .then((responseJson) => {
+        .then(async (responseJson) => {
           if(responseJson.status == 'success'){
-            this.props.logInUser(responseJson.user, responseJson.token)
+            try{
+              await AsyncStorage.setItem('token', responseJson.token);
+            }catch (error) {
+              alert('AsyncStorage error: ' + error.message);
+            }
+            navigator.navigate('Profile', { user: responseJson.user, token: responseJson.token});
           }else{
             alert("invalid username or password");
           }
-        }).catch((error) => {
-          alert("invalid username or password");
-        })
+        });
       }
    }
 
@@ -53,6 +60,7 @@ class Login extends Component {
 
 
    render() {
+      const { navigate } = this.props.navigation;
       return (
       <View style = {styles.container}>
         
@@ -67,7 +75,7 @@ class Login extends Component {
         <Text style={styles.text}>or</Text>
 
         <TouchableHighlight
-            onPress = { () => this.register()} style = {styles.submit}>
+            onPress = { () => navigate('SignUp')} style = {styles.submit}>
             <Text>
                Register Now
             </Text>
