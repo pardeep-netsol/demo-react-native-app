@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { AsyncStorage, AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet, BackHandler, ListView } from 'react-native';
+import { AsyncStorage, AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet, BackHandler, ListView, Image } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import Dub from './dubs';
 
 class Profile extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: 'welcome to profile',
+    title: 'Dashbaord',
     headerLeft: null,
   });
 
@@ -47,22 +47,18 @@ class Profile extends Component {
     const { navigate } = this.props.navigation;
     return (
       <View style = {styles.container}>
+        <View style={styles.topBar}>
+          <TouchableHighlight
+            onPress = { () => navigate('UserListing', {token: params.token})} style={styles.listing}>
+            <Image source={require('../../images/teamwork.png')} style={styles.imageIcon}/>
+          </TouchableHighlight>
+          <TouchableHighlight
+             onPress = { () => this.logout()} style={styles.logout}>
+            <Image source={require('../../images/logout.png')} style={styles.imageIcon}/>
+          </TouchableHighlight>
+        </View>
         <Text>Hey {params.user.email}</Text>
         <Text>Welcome to Dub App</Text>
-        <TouchableHighlight
-            onPress = { () => this.logout()} style={styles.submit}>
-            <Text>
-               Logout
-            </Text>
-         </TouchableHighlight>
-         <Text>or</Text>
-         <TouchableHighlight
-            onPress = { () => navigate('UserListing', {token: params.token})} style={styles.submit}>
-            <Text>
-               List all users
-            </Text>
-         </TouchableHighlight>
-
          <ListView 
             dataSource={this.state.listViewDubs} 
             renderRow={(rowData) => <Dub dub={rowData} token={this.props.navigation.state.params.token} />} 
@@ -73,19 +69,27 @@ class Profile extends Component {
 }
 export default Profile
 const styles = StyleSheet.create ({
-   container: {
-      flex: 1
+  container: {
+    flex: 1
+  },
+  topBar:{
+    height: 50,
+    backgroundColor: '#1a9776',
+    flexDirection: 'row',
+    alignItems: 'center',
    },
-   input: {
-      width: 100,
-      margin: 15,
-      borderColor: 'grey',
-      borderWidth: 1
-   },
-   submit: {
-      backgroundColor: 'silver',
-      padding: 10
-   }
+  input: {
+    width: 100,
+    margin: 15,
+    borderColor: 'grey',
+    borderWidth: 1
+  },
+  logout: {
+    marginLeft: 310  
+  },
+  listing:{
+    left: 10
+  }
 })
 
 

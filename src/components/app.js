@@ -18,19 +18,19 @@ import { StackNavigator } from 'react-navigation';
 import { NavigationActions } from 'react-navigation'
 
 
-import SignUp from './src/components/signUp';
-import Profile from './src/components/profile';
-import Login from './src/components/login';
-import UserListing from './src/components/userListing';
+import SignUp from './signUp';
+import Profile from './profile';
+import Login from './login';
+import UserListing from './userListing';
 // import UserDetails from './src/components/userDetails';
 global.auth_token = '';
 
-class Home extends React.Component {
-  // static navigationOptions = ({ navigation }) => ({
-  //   title: 'welcome user ',
-  //   headerLeft: null,
-  //   headerTintColor: 'black',
-  // });
+class Main extends React.Component {
+  static navigationOptions = ({ navigation }) => ({
+    title: 'welcome user ',
+    headerLeft: null,
+    headerTintColor: 'black',
+  });
 
   constructor(props){
       super(props)
@@ -57,25 +57,20 @@ class Home extends React.Component {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
-        <View style={styles.title}>
-          <Text style={{fontSize: 30, fontWeight: 'bold', color: '#7d8da5'}}>Welcome to My App</Text>
-        </View>
-        <View style={styles.bottomNav}>
-          <View style={styles.login}>
-            <Button onPress={() => navigate('Login')} title="Login" />
-          </View>
-          <View style={styles.register}>
-            <Button onPress={() => navigate('SignUp')} title="Register" />
-          </View>
-        </View>
+        <Button
+          onPress={() => navigate('Login')}
+          title="Login" />
+          <Text>OR</Text>
+        <Button
+          onPress={() => navigate('SignUp')}
+          title="Register" />
       </View>     
     );
   }
 }
-
+export default Main
 const AwesomeProject = StackNavigator({
   // initialRouteName: {screen: (token.length == 0 ? Home : Profile)},
-  Home: { screen: Home },
   Login: {screen:  Login},
   SignUp: {screen: SignUp},
   Profile: {screen: Profile},
@@ -85,30 +80,9 @@ const AwesomeProject = StackNavigator({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#42f4d9',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-  title:{
-    top:250,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bottomNav:{
-    flexDirection: 'row',
-    position: 'absolute',
-    bottom: 0,
-    justifyContent: 'flex-start'
-  },
-  login:{
-    left:0,
-  },
-  register:{
-    right: 0,
-    alignItems: 'flex-end',
-    paddingLeft: 230
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: '#42f4d9'
   },
   submit: {
       backgroundColor: 'silver',
@@ -118,4 +92,4 @@ const styles = StyleSheet.create({
 });
 
 // AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
-AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
+AppRegistry.registerComponent('Main', () => Main);

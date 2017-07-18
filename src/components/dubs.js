@@ -1,52 +1,107 @@
 import React, { Component } from 'react';
-import { AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet , Image} from 'react-native';
-import Video from 'react-native-video';
+import { AppRegistry, Text, View, TextInput, TouchableOpacity, StyleSheet , Image, TouchableHighlight} from 'react-native';
+// import Video from 'react-native-video';
 // import MediaPlayer from 'react-native-android-video-player'
 // import { Dimensions } from 'react-native'
-// import VideoPlayer from 'react-native-video-controls';
+import VideoPlayer from 'react-native-video-controls';
 
 class Dubs extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      user: this.props.dub
+      user: this.props.dub,
+      showVideoPlayer: false,
+      showFullScreen:false
     };
   }
+
+  loadStart=()=>{
+    // alert("video start loading");
+  }
+
+  onBuffer=()=>{
+    // alert("video is buffering");
+  }
+
+  loadFullScreen=()=>{
+    //this.player.presentFullscreenPlayer()
+    //this.setState({showFullScreen: true})
+  }
+
+  onEnd=()=>{
+    this.setState({showFullScreen: false})
+  }
+
+
+  renderVideo=()=>{
+    if (this.state.showVideoPlayer){
+      return (
+        <View style = {styles.videoTag}>
+        <VideoPlayer
+            source={{uri: this.props.dub.source.url }}
+            navigator={ this.props.navigator }
+        />
+                       
+        </View>
+        );
+      }else{
+        return (
+          <View style = {styles.videoTag}>
+            <TouchableOpacity style={styles.container} onPress={() => this.setState({showVideoPlayer: true})}>
+              <Text>
+                Open Video Player
+              </Text>
+            </TouchableOpacity>
+          </View>
+        );
+      }
+  }
+
 
   
   render() {
       return (
-      	<View>
-          <Text>{this.props.dub.caption}</Text>
-          <View style = {styles.videoTag}>
-            <Video source={{uri: this.props.dub.source.url}}
-              ref={(ref) => {
-                   this.player = ref
-                 }} 
-               rate={0}                              // 0 is paused, 1 is normal.
-               volume={1.0}                            // 0 is muted, 1 is normal.
-               muted={false}                           // Mutes the audio entirely.
-               paused={true}
-               controls={true} 
-               fullscreen={true}                          // Pauses playback entirely.
-               resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-               repeat={false}                           // Repeat forever.
-               playInBackground={false}                // Audio continues to play when app entering background.
-               playWhenInactive={false}                // [iOS] Video continues to play when control or notification center are shown.
-               ignoreSilentSwitch={"ignore"}           // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
-               progressUpdateInterval={250.0}          // [iOS] Interval to fire onProgress (default to ~250ms)
-               onLoadStart={this.loadStart}            // Callback when video starts to load
-               onLoad={this.setDuration}               // Callback when video loads
-               onProgress={this.setTime}               // Callback every ~250ms with currentTime
-               onEnd={this.onEnd}                      // Callback when playback finishes
-               onError={this.videoError}               // Callback when video cannot be loaded
-               onBuffer={this.onBuffer}                // Callback when remote video is buffering
-               onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
-               style={styles.backgroundVideo}
-               />            
-          </View>
-        </View> 
+      	<View style = {styles.videoTag}>
+          <VideoPlayer
+            source={{uri: this.props.dub.source.url }}
+            playInBackground={ false }   // play audio when entering background 
+            playWhenInactive={ false }   // [iOS] continuing playing when notification centre active 
+            resizeMode={ 'contain' }     // 'contain' or 'cover' should be used. 
+            paused={ true }             // stop playback entirely 
+            repeat={ true }             // Repeats at end of duration 
+            muted={ false }              // Mutes the audio entirely. 
+            title={ '' }                 // Video title, if null title area is hidden 
+            volume={ 1 }                 // 0 is muted, 1 is normal. 
+            rate={ 1 }                   // 0 is paused, 1 is normal. 
+         
+            // settings 
+            controlTimeout={ 15000 }     // hide controls after ms of inactivity. 
+            navigator={ navigator }      // prop from React Native <Navigator> component 
+            seekColor={ '#FFF' }         // fill/handle colour of the seekbar 
+            videoStyle={ {} }            // Style appended to <Video> component 
+            style={ {} }                 // Style appended to <View> container 
+         
+            // event callbacks 
+            onError={ () => {} }         // Fired when an error is encountered on load 
+            onBack={ () => {} }          // Function fired when back button is pressed. 
+            onEnd={ () => {} } 
+          />
+          <View style={styles.bottomBar}>
+            <TouchableHighlight
+             style={styles.listing}>
+            <Image source={require('../../images/chat.png')} style={styles.imageIcon}/>
+            </TouchableHighlight>
+            <TouchableHighlight
+               style={styles.logout}>
+              <Image source={require('../../images/eye.png')} style={styles.imageIcon}/>
+            </TouchableHighlight>
+            <TouchableHighlight
+              style={styles.listing}>
+              <Image source={require('../../images/like.png')} style={styles.imageIcon}/>
+            </TouchableHighlight>
+          </View>                       
+        </View>
     );
   }
 }
@@ -54,12 +109,13 @@ export default Dubs
 // const { height, width } = Dimensions.get('window')
 const styles = StyleSheet.create ({
    container: {
-      paddingLeft: 8,
-      flexDirection: 'row',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#F5FCFF',
    },
    videoTag: {
     height: 300,
-    paddingTop: 50,
    },
    backgroundVideo: {
       position: 'absolute',
@@ -67,6 +123,12 @@ const styles = StyleSheet.create ({
       left: 0,
       bottom: 0,
       right: 0,
+    },
+    bottomBar:{
+      height: 50,
+      backgroundColor: '#1a9776',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
    outer:{
     flexDirection: 'column',
@@ -94,6 +156,14 @@ const styles = StyleSheet.create ({
       alignItems: 'center',
       justifyContent: 'center'
   	},
+    imageIcon:{
+      height: 20, 
+      width: 20, 
+      justifyContent: 'flex-start', 
+      alignItems: 'flex-start',
+      marginLeft: 10,
+      marginRight: 10
+    },
 })
 
 

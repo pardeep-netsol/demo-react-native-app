@@ -33,6 +33,13 @@ import com.android.build.OutputFile
  *   // bundleInPaidRelease: true,
  *   // bundleInBeta: true,
  *
+ *   // whether to disable dev mode in custom build variants (by default only disabled in release)
+ *   // for example: to disable dev mode in the staging build type (if configured)
+ *   devDisabledInStaging: true,
+ *   // The configuration property can be in the following formats
+ *   //         'devDisabledIn${productFlavor}${buildType}'
+ *   //         'devDisabledIn${buildType}'
+ *
  *   // the root of your project, i.e. where "package.json" lives
  *   root: "../../",
  *
@@ -96,15 +103,15 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
-    signingConfigs {
-        release {
-            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-                storeFile file(MYAPP_RELEASE_STORE_FILE)
-                storePassword MYAPP_RELEASE_STORE_PASSWORD
+    signingConfigs { 
+        release { 
+            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) { 
+                storeFile file(MYAPP_RELEASE_STORE_FILE) 
+                storePassword MYAPP_RELEASE_STORE_PASSWORD 
                 keyAlias MYAPP_RELEASE_KEY_ALIAS
-                keyPassword MYAPP_RELEASE_KEY_PASSWORD
-            }
-        }
+                keyPassword MYAPP_RELEASE_KEY_PASSWORD 
+            } 
+        } 
     }
     splits {
         abi {
@@ -138,7 +145,6 @@ android {
 
 dependencies {
     compile project(':react-native-video')
-    compile project(':react-native-android-video-player')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules

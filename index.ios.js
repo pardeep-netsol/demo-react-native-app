@@ -6,48 +6,101 @@
 
 import React, { Component } from 'react';
 import {
+  AsyncStorage,
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableHighlight, 
+  Button, Image
 } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { NavigationActions } from 'react-navigation'
 
-export default class AwesomeProject extends Component {
+
+import SignUp from './src/components/signUp';
+import Profile from './src/components/profile';
+import Login from './src/components/login';
+import UserListing from './src/components/userListing';
+// import UserDetails from './src/components/userDetails';
+// global.auth_token = '';
+
+class Home extends React.Component {
+  static navigationOptions = ({ navigation }) => ({
+    // title: 'welcome user ',
+    headerLeft: null,
+    headerTintColor: '#1a1a1a',
+  });
+  constructor(props){
+      super(props)
+      this.state={
+         user:{},
+         token:''
+      }
+   }
+
+   async componentWillMount() {
+    try {
+      var token = await AsyncStorage.getItem('token');
+      if (token !== null){
+        this.setState({token: token});
+        this.props.navigation.navigate('Profile', {token: token, user: {email: 'saini.pardeep87@gmail.com'}});
+      }else{
+        this.props.navigation.navigate('Login');
+      } 
+    } catch (error) {
+      alert('AsyncStorage error: ' + error.message);
+    }
+   }
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
+        <View style={styles.title}>
+          <Image source={require('./images/shadow-flat-logo.png')} />
+        </View>
+      </View>     
     );
   }
 }
 
+const AwesomeProject = StackNavigator({
+  // initialRouteName: {screen: (token.length == 0 ? Home : Profile)},
+  Home: { screen: Home },
+  Login: {screen:  Login},
+  SignUp: {screen: SignUp},
+  Profile: {screen: Profile},
+  UserListing: {screen: UserListing}
+
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#1a1a1a'
+  },
+  title:{
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    marginTop: 100  
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  bottomNav:{
+    flexDirection: 'column',
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 100
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  login:{
+    backgroundColor: '#1a9776',
+    padding: 5,
+    borderRadius: 5,
+    marginBottom: 10,
+    width: 300,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 });
-
 AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
